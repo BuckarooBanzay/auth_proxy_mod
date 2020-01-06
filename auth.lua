@@ -14,6 +14,11 @@ local function auth_handler(auth)
 	local banned = false
 	local message = ""
 
+	local custom_auth_success, custom_msg = auth_proxy.custom_handler(auth.name)
+	if not custom_auth_success and custom_msg then
+		message = custom_msg
+	end
+
 	if auth_proxy.disallow_banned_players and has_xban2_mod then
 		-- check xban db
 		local xbanentry = xban.find_entry(auth.name)
@@ -23,7 +28,7 @@ local function auth_handler(auth)
 		end
 	end
 
-	if not banned then
+	if not banned and custom_auth_success then
 		-- check tan
 		local tan = auth_proxy.tan[auth.name]
 		if tan ~= nil then
