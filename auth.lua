@@ -8,20 +8,20 @@ local has_xban2_mod = minetest.get_modpath("xban2")
 -- auth request
 local function auth_handler(auth)
 	local handler = minetest.get_auth_handler()
-	minetest.log("action", "[auth_proxy] auth: " .. auth.name)
+	minetest.log("action", "[auth_proxy] auth: " .. auth.username)
 
 	local success = false
 	local banned = false
 	local message = ""
 
-	local custom_auth_success, custom_msg = auth_proxy.custom_handler(auth.name)
+	local custom_auth_success, custom_msg = auth_proxy.custom_handler(auth.username)
 	if not custom_auth_success and custom_msg then
 		message = custom_msg
 	end
 
 	if auth_proxy.disallow_banned_players and has_xban2_mod then
 		-- check xban db
-		local xbanentry = xban.find_entry(auth.name)
+		local xbanentry = xban.find_entry(auth.username)
 		if xbanentry and xbanentry.banned then
 			banned = true
 			message = "Banned!"
@@ -30,37 +30,29 @@ local function auth_handler(auth)
 
 	if not banned and custom_auth_success then
 		-- check tan
-		local tan = auth_proxy.tan[auth.name]
+		local tan = auth_proxy.tan[auth.username]
 		if tan ~= nil then
 			success = tan == auth.password
 		end
 
 		-- check auth
 		if not success then
-			local entry = handler.get_auth(auth.name)
-			if entry and minetest.check_password_entry(auth.name, entry.password, auth.password) then
+			local entry = handler.get_auth(auth.username)
+			if entry and minetest.check_password_entry(auth.username, entry.password, auth.password) then
 				success = true
 			end
 		end
 	end
 
 	channel.send({
-		type = "auth",
-		data = {
-			name = auth.name,
-			success = success,
-			message = message
-		}
+		name = auth.username,
+		success = success,
+		message = message
 	})
 end
 
 
 function auth_proxy.http_init(http, url)
 	channel = Channel(http, url .. "/api/minetest/channel")
-
-	channel.receive(function(data)
-		if data.type == "auth" then
-			auth_handler(data.data)
-		end
-	end)
+	channel.receive(auth_handler)
 end

@@ -1,0 +1,2 @@
+# The url to the auth proxy app
+auth_proxy.url (Auth proxy url) string http://127.0.0.1:8080

@@ -34,7 +34,7 @@ local function Channel(http, url, cfg)
 				local data = minetest.parse_json(res.data)
 
 				if debug then
-					minetest.log("action", "[webmail-rx] " .. dump(data))
+					minetest.log("action", "[channel-rx] " .. dump(data))
 				end
 
 				if data then
@@ -57,7 +57,7 @@ local function Channel(http, url, cfg)
 		-- POST
 
 		if debug then
-			minetest.log("action", "[webmail-tx] " .. dump(data))
+			minetest.log("action", "[channel-tx] " .. dump(data))
 		end
 
 		http.fetch({

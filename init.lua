@@ -1,6 +1,6 @@
 auth_proxy = {
   disallow_banned_players = true,
-  url = minetest.settings:get("auth_proxy.url"),
+  url = minetest.settings:get("auth_proxy.url") or "http://127.0.0.1:8080",
   tan = {},
   custom_handler = function()
     return true
