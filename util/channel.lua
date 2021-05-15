@@ -7,7 +7,7 @@ local function Channel(http, url, cfg)
 	cfg = cfg or {}
 	local extra_headers = cfg.extra_headers or {}
 	local timeout = cfg.timeout or 1
-	local long_poll_timeout = cfg.long_poll_timeout or 30
+	local long_poll_timeout = cfg.long_poll_timeout or 60
 	local error_retry = cfg.error_retry or 10
 
 	-- assemble post-header with json content
